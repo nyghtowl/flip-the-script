@@ -1,0 +1,9 @@
+*.py[co]
+.ds_store
+*.ipynb_checkpoints
+
+# Packages
+*.egg
+
+#Data
+*data
