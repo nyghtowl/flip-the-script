@@ -15,6 +15,12 @@ Issues
 
 Resources
 -----------------
+- DeepMind dqn https://github.com/deepmind/dqn & lab https://github.com/deepmind/lab
+- OpenAI rllab https://github.com/openai/rllab & baselines https://github.com/openai/baselines
+- Silver "UCL Course on RL" http://www0.cs.ucl.ac.uk/staff/d.silver/web/Teaching.html
+- Sutton & Barto Reinforcement Learning
+- Karpathy "Deep Reinforcement Learning: Pong from Pixels" http://karpathy.github.io/2016/05/31/rl/
+
 
 Disclaimer
 ----------------- 
