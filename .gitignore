@@ -4,6 +4,7 @@
 
 # Packages
 *.egg
+.idea
 
 #Data
 *data
