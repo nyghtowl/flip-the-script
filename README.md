@@ -51,7 +51,7 @@ Found this [Guante poet](https://www.newstatesman.com/culture/2013/08/i-hate-str
 
 Contributions
 -----------------
-Additions welcome. Reveiew the [contributing page](CONTRIBUTING.md) and send a pull request.
+Additions welcome. Reveiew the [contributing page](CONTRIBUTING.md).
 
 
 Resources
