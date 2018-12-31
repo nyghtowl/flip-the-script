@@ -3,25 +3,16 @@ Flip The Script
 
 About
 -----------------
-Organizing data on media that helps further equal representation and positive imagery.
-
+Collecting data on media that helps further equal representation and positive imagery.
 
 
 Strong Female Media List
 -----------------
 
-List movies and TV resources that feature strong female characters outside the media norms.
+List movies and TV resources that feature strong female characters outside the media norms. 
+Viewable in this [Google spreadsheet](https://docs.google.com/spreadsheets/d/1TEHnaoRE2NrXFrPicPc4chgQC7EVrxRG1TnRjRVBk1Y/edit?usp=sharing)
 
-[Guante poet](https://www.newstatesman.com/culture/2013/08/i-hate-strong-female-characters)
-- *I want her to be free to express herself*
-- *I want her to have meaningful, emotional relationships with other women*
-- *I want her to be weak sometimes*
-- *I want her to be strong in a way that isn’t about physical dominance or power*
-- *I want her to cry if she feels like crying*
-- *I want her to ask for help*
-- *I want her to be who she is*
-
-**Criteria - What to include **:
+**Criteria - What to include**:
 
 - Protagonist
 - Breaks Stereotypes
@@ -36,6 +27,15 @@ List movies and TV resources that feature strong female characters outside the m
 - Helping herself or others that is not a man
 - Robust character
 
+Found this [Guante poet](https://www.newstatesman.com/culture/2013/08/i-hate-strong-female-characters) paraphrase during the search.
+- *I want her to be free to express herself*
+- *I want her to have meaningful, emotional relationships with other women*
+- *I want her to be weak sometimes*
+- *I want her to be strong in a way that isn’t about physical dominance or power*
+- *I want her to cry if she feels like crying*
+- *I want her to ask for help*
+- *I want her to be who she is*
+
 **Criteria - What NOT to include**:
 
 - Saved by a man
@@ -48,9 +48,10 @@ List movies and TV resources that feature strong female characters outside the m
 - Treats a strong women as crazy or a psychopath and reafirms that image  
 - Serial killers
 
+
 Contributions
 -----------------
-Additions welcome - send a pull request.
+Additions welcome. Reveiew the [contributing page](CONTRIBUTING.md) and send a pull request.
 
 
 Resources
