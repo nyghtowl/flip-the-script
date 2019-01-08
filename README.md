@@ -3,7 +3,7 @@ Flip The Script
 
 About
 -----------------
-Collecting data on media that helps further equal representation and positive imagery.
+Collecting data on media that helps further equal representation and positive imagery. Driving for feminism and gender inclusivity in media.
 
 
 Strong Female Media List
