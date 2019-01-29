@@ -3,10 +3,15 @@ Flip The Script
 
 About
 -----------------
-Collecting data on media that helps further equal representation and positive imagery. Driving for feminism and gender inclusivity in media.
+Organizing data into a searchable data resource about empowered female and non-binary representation in media. The goal of this project is to contribute to the ongoing efforts that define, review and drive for increased representation and imagery as well as give a space for others in the community to participate. You do not have to be technical to participate in this project. That is the beauty of media. 
 
+What stories and characters inspire you that you think should be on this list/in the dataset? What criteria should we use? How should it be measured?
 
-Strong Female Media List
+Building using Google Cloud Platform since I work there and I have access to resources. 
+
+**This is not a Google product.**
+
+Female & Non-Binary Empowered Media List
 -----------------
 
 List movies and TV resources that feature strong female characters outside the media norms. 
@@ -16,10 +21,10 @@ Viewable in this [Google spreadsheet](https://docs.google.com/spreadsheets/d/1TE
 
 - Protagonist
 - Breaks Stereotypes
-- Has power | agency and uses it wisely
-- Has personal goals 
+- Agency | power 
+- Goals (beyond finding or supporting a man) 
 - On a journey
-- Has independent ideas
+- Independent ideas
 - More than one woman
 - Assertive, intelligent, self-reliant characterists
 - Survivor
@@ -63,6 +68,7 @@ Resources
 - [MsMojo](https://www.youtube.com/channel/UC3rLoj87ctEHCcS7BuvIzkQ)
 - [Bitch Media](https://www.bitchmedia.org/)
 - [Bechdel Test](https://bechdeltest.com/)
+- [Geena Davis Institute on Gender in Media](https://seejane.org/)
 
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/nyghtowl/mixed-tape/blob/master/LICENSE)
