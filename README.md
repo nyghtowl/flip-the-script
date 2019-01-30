@@ -47,6 +47,7 @@ Found this [Guante poet](https://www.newstatesman.com/culture/2013/08/i-hate-str
 - Man makes most decisions for the character
 - Only goal/value is to help a man achieve his goal 
 - Exists only to be objectified
+- Gratuitous nudity
 - Standard love story | only has value or is complete when finds a man
 - Steretypical archtype (manic pixy dreamgirl)
 - Pits women against women and feeds the women don't get along narrative
