@@ -1,6 +1,9 @@
 Flip The Script
 ==================
 
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/nyghtowl/mixed-tape/blob/master/LICENSE)
+
+
 About
 -----------------
 Organizing data into a searchable data resource about empowered female and non-binary representation in media. The goal of this project is to contribute to the ongoing efforts that define, review and drive for increased representation and imagery as well as give a space for others in the community to participate. You do not have to be technical to participate in this project. That is the beauty of media. 
@@ -9,7 +12,6 @@ What stories and characters inspire you that you think should be on this list/in
 
 Building using Google Cloud Platform since I work there and I have access to resources. 
 
-**This is not a Google product.**
 
 Female & Non-Binary Empowered Media List
 -----------------
@@ -72,6 +74,4 @@ Resources
 - [Geena Davis Institute on Gender in Media](https://seejane.org/)
 
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/nyghtowl/mixed-tape/blob/master/LICENSE)
-
-
+**This is not a Google product.**

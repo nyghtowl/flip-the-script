@@ -15,27 +15,69 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"os"
-	"fmt"
+	"github.com/gorilla/mux"
+	"time"
+	"html/template"
 )
 
+type PageVariables struct {
+	Date         string
+	Time         string
+}
+
 func main() {
+	//Start the web server, set the port to listen to 8080. Without assumes localhost.
 	port := os.Getenv("PORT")
 	if port == ""{
 		port = "8080"
 		log.Print("Defaulting to port %s ", port)
 	}
-	http.HandleFunc("/",indexHandler)
+
+	//Code adjust from https://github.com/campoy/go-web-workshop/blob/master/section02/README.md
+	r := mux.NewRouter()
+
+	r.HandleFunc("/", indexHandler)
+	http.Handle("/", r)
+
+	//// match only GET requests on /media/
+	//r.HandleFunc("/media/", listMedia).Methods("GET")
+	//
+	//// match only POST requests on /media/
+	//r.HandleFunc("/media/", addMedia).Methods("POST")
+	//
+	//// match GET regardless of mediaID
+	//r.HandleFunc("/media/{mediaID}", getMedia)
+
+
 	log.Printf("Listening on port %s", port)
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", port), nil))
 }
+
 
 func indexHandler(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
 		http.NotFound(w, r)
 		return
 	}
-	fmt.Fprint(w, "Flip the Script!")
+	//fmt.Fprint(w, "Flip the Script!")
+
+	now := time.Now() // find the time right now
+	HomePageVars := PageVariables{ //store the date and time in a struct
+		Date: now.Format("02-01-2006"),
+		Time: now.Format("15:04:05"),
+	}
+
+	t, err := template.ParseFiles("content/index.html") //parse the html file index.html
+	if err != nil { // if there is an error
+		log.Print("template parsing error: ", err) // log it
+	}
+	err = t.Execute(w, HomePageVars) //execute the template and pass it the HomePageVars struct to fill in the gaps
+	if err != nil { // if there is an error
+		log.Print("template executing error: ", err) //log it
+	}
+
 }
