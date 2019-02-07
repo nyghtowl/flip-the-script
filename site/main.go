@@ -25,8 +25,9 @@ import (
 )
 
 type PageVariables struct {
-	Date         string
-	Time         string
+	Name string
+	Date string
+	Time string
 }
 
 func main() {
@@ -63,21 +64,23 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
-	//fmt.Fprint(w, "Flip the Script!")
 
 	now := time.Now() // find the time right now
 	HomePageVars := PageVariables{ //store the date and time in a struct
+		Name: "Flip the Script",
 		Date: now.Format("02-01-2006"),
 		Time: now.Format("15:04:05"),
 	}
 
-	t, err := template.ParseFiles("content/index.html") //parse the html file index.html
-	if err != nil { // if there is an error
-		log.Print("template parsing error: ", err) // log it
-	}
-	err = t.Execute(w, HomePageVars) //execute the template and pass it the HomePageVars struct to fill in the gaps
-	if err != nil { // if there is an error
-		log.Print("template executing error: ", err) //log it
-	}
+	t := template.Must(template.ParseFiles("content/index.html")) //parse the html file index.html
+	//if err != nil { // if there is an error
+	//	log.Print("template parsing error: ", err) // log it
+	//}
+	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
+
+	 //execute the template and pass it the HomePageVars struct to fill in the gaps
+	if err := t.ExecuteTemplate(w, "index.html", HomePageVars); err !=nil { // if there is an error
+		http.Error(w, err.Error(), http.StatusInternalServerError) }//log it
+
 
 }
