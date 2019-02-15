@@ -2,7 +2,9 @@ body  {
     min-height:100%;
     background-image: url("/images/vintage-movie-frame-film-strip-background-blank-33041635.jpg"), linear-gradient(rgba(0,0,0,0.2),rgba(0,0,0,0.3));
     background-blend-mode: overlay;
-    background-size:cover
+    background-size:cover;
+    font-family: Arial, sans-serif;
+    color: blue;
 }
 
 .main {
@@ -18,5 +20,6 @@ body  {
     height: 100vh;
     display: flex;
     justify-content: left;
-    align-items: left
-}​
+    align-items: normal;
+}
+
