@@ -21,17 +21,36 @@
 {{/*---*/}}
 <html>
 <head>
-    <title>{{.Name}}</title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <title>{{.PageTitle}}</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="/static/template.css">
 </head>
+<script type='text/javascript'>
+    $(document).ready(function() {
+        $('input[name=animalselect]').change(function(){
+            $('form').submit();
+        });
+    });
+</script>
 <body>
-    <h1 class="main">{{.Name}}</h1>
+    <h1 class="main">{{.PageTitle}}</h1>
 
+    {{with $1:=.PageRadioButtons}}
     <p class="details">The date today is {{.Date}}</p>
 
-    <p>Checkout the media here...</p>
+    <p> Which do you prefer</p>
+
+    <form action="/selected" method="post">
+        {{range $1}}
+        <input type="radio" name={{.Name}} value={{.Value}} {{if .IsDisabled}} disabled=true {{end}} {{if .IsChecked}}checked{{end}}> {{.Text}}
+         {{end}}
+    </form>
+    {{end}}
+
+  {{with $2:=.Answer}}
+    <p>Your answer is {{$2}}</p>
+   {{end}}
 
 </body>
 
