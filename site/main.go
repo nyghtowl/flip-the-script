@@ -16,17 +16,14 @@ package main
 
 import (
 	"fmt"
+	"github.com/gorilla/handlers"
+	"github.com/gorilla/mux"
 	"html/template"
 	"log"
 	"net/http"
 	"os"
 	"time"
 )
-
-type handler struct {
-	hf http.HandlerFunc
-}
-
 
 type RadioButton struct {
 	Name       string
@@ -44,97 +41,149 @@ type templateParams struct {
 
 }
 
-
 func main() {
 	//Start the web server, set the port to listen to 8080. Without assumes localhost.
 	port := os.Getenv("PORT")
-	if port == ""{
+	if port == "" {
 		port = "8080"
 		log.Print("Defaulting to port %s ", port)
 	}
-
-	//Code adjust from https://github.com/campoy/go-web-workshop/blob/master/section02/README.md
-/*	r := mux.NewRouter()*/
-
-	//This method takes in the URL path "/" and a function that takes in a response writer, and a http request.
-	/*r.HandleFunc("/", indexHandler)*/
-
-	//// match only GET requests on /media/
-	//r.HandleFunc("/media/", listMedia).Methods("GET")
-	//
-	//// match only POST requests on /media/
-	//r.HandleFunc("/media/", addMedia).Methods("POST")
-	//
-	//// match GET regardless of mediaID
-	//r.HandleFunc("/media/{mediaID}", getMedia)
-
-	//Start the web server, set the port to listen to 8080. Without a path it assumes localhost
-	//Print any errors from starting the webserver
-	http.Handle("/", handler{indexHandler})
-	http.Handle("/selected", handler{UserSelected})
+	registerHandlers()
 	log.Printf("Listening on port %s", port)
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", port), nil))
 }
 
-func (h *handler) serveIndex(w http.ResponseWriter, r *http.Request) {
-	// Just redirect to the first one
-	http.Redirect(w, r, "/site/", http.StatusTemporaryRedirect)
+//Code adjust from https://github.com/campoy/go-web-workshop/blob/master/section02/README.md & https://github.com/GoogleCloudPlatform/golang-samples/blob/master/getting-started/bookshelf/app/app.go
+func registerHandlers() {
+	r := mux.NewRouter()
+	r.Methods("GET").Path("/").Handler(appHandler(indexHandler))
+	r.Methods("POST").Path("/selected").Handler(appHandler(optionSelected))
+
+	/*	r.Methods("POST").Path("/books").HandlerFunc(appHandler(createHandler))
+	// match only POST requests on /media/
+	r.Methods("POST").Handler("/media/", addMedia)
+	// match GET regardless of mediaID
+	r.HandleFunc("/media/{mediaID}", getMedia)
+*/
+	http.Handle("/", handlers.CombinedLoggingHandler(os.Stderr, r))
 }
 
-func (h handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	current := r.URL.Path
-	/*	w.Header().Set("Content-Type", "text/plain")*/
-	if current == "/" || current == "/selected" {
-		h.hf(w, r)
-		return
-	} else {
-		http.NotFound(w, r)
-		return
+
+// http://blog.golang.org/error-handling-and-go
+type appHandler func(http.ResponseWriter, *http.Request) *appError
+
+type appError struct {
+	Error   error
+	Message string
+	Code    int
+}
+
+func (fn appHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	if e := fn(w, r); e != nil { // e is *appError, not os.Error.
+		log.Printf("Handler error: status code: %d, message: %s, underlying err: %#v\n", e.Code, e.Message, e.Error)
+		http.Error(w, e.Message, e.Code)
 	}
 
 }
-func indexHandler(w http.ResponseWriter, r *http.Request) {
 
+func appErrorf(err error, format string, v ...interface{}) *appError {
+	return &appError{
+		Error:   err,
+		Message: fmt.Sprintf(format, v...),
+		Code:    500,
+	}
+}
+
+
+func indexHandler(w http.ResponseWriter, r *http.Request) *appError{
 	params := templateParams {}
 	params.PageTitle = "Flip th Script"
+	params.Date = time.Now().Format("02-01-2006")
 	params.PageRadioButtons = []RadioButton{
 		RadioButton{"animalselect", "cats", false, false, "Cats"},
 		RadioButton{"animalselect", "dogs", false, false, "Dogs"},}
-    params.Date = time.Now().Format("02-01-2006")
 
 
-	t := template.Must(template.ParseFiles("content/index.html"))
-/*	if err := getBQData(r); err != nil {
+/*	t := template.Must(template.ParseFiles("content/index.html"))
+*//*	if err := getBQData(r); err != nil {
 		log.Fatalf("Error getting data: %v\n", err)
 	}
 */
-	//execute the template and pass it the params struct to fill in the gaps
+/*	//execute the template and pass it the params struct to fill in the gaps
 	if err := t.ExecuteTemplate(w, "index.html", params); err !=nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
-		log.Print("Form execute error: ", err)
-	}
+		return appErrorf(err, "Form execute error: %v", err)
+	}*/
+	log.Printf("INDEXHANDLER")
+	return parseTemplate("index.html").Execute(w, r, params)
 }
+
 /*https://blog.scottlogic.com/2017/02/28/building-a-web-app-with-go.html*/
-func UserSelected(w http.ResponseWriter, r *http.Request){
+func optionSelected(w http.ResponseWriter, r *http.Request) *appError {
 	r.ParseForm()
 	// r.Form is now either
 	// map[animalselect:[cats]] OR
 	// map[animalselect:[dogs]]
 	// so get the animal which has been selected
-	youranimal := r.Form.Get("animalselect")
-
+	log.Printf("OPTIONS %s", r.FormValue("animalselect"))
 	params := templateParams {}
 	params.PageTitle = "Your preferred animal"
-	params.Answer = youranimal
+	params.Date = time.Now().Format("02-01-2006")
+	params.Answer = r.Form.Get("animalselect")
 
 
 	// generate page by passing page variables into template
-
+/*
 	t := template.Must(template.ParseFiles("content/index.html"))
 
 	//execute the template and pass it the params struct to fill in the gaps
 	if err := t.ExecuteTemplate(w, "index.html", params); err !=nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
-		log.Print("Post execute error: ", err)
+		return appErrorf(err, "Post execute error: %v", err)
+	}*/
+	log.Printf("OPTIONS")
+
+	return parseTemplate("index.html").Execute(w,r,params)
+}
+
+
+// parseTemplate applies a given file to the body of the base template.
+func parseTemplate(filename string) *appTemplate {
+/*	tmpl := template.Must(template.ParseFiles("templates/base.html"))
+
+	// Put the named file into a template called "body"
+	path := filepath.Join("content", filename)
+	b, err := ioutil.ReadFile(path)
+	if err != nil {
+		panic(fmt.Errorf("could not read template: %v", err))
 	}
+	template.Must(tmpl.New("body").Parse(string(b)))
+*/
+	log.Printf("PARSING")
+	tempPath :="content/"
+	tmpl := template.Must(template.ParseFiles(tempPath + filename))
+
+	//execute the template and pass it the params struct to fill in the gaps
+
+	return &appTemplate{tmpl.Lookup("index.html")}
+}
+
+// appTemplate is a user login-aware wrapper for a html/template.
+type appTemplate struct {
+	t *template.Template
+}
+
+// Execute writes the template using the provided data, adding login and user
+// information to the base template.
+func (tmpl *appTemplate) Execute(w http.ResponseWriter, r *http.Request, data interface{}) *appError {
+	d := struct {
+		Data        interface{}
+	}{
+		Data:        data,
+	}
+	log.Printf("EXECUTE")
+	if err := tmpl.t.Execute(w, d); err != nil {
+		return appErrorf(err, "could not write template: %v", err)
+	}
+	return nil
 }

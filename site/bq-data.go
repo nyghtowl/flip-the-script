@@ -86,3 +86,27 @@ func getBQData(r *http.Request) error {
 	*/
 	return nil
 }
+
+
+const listStatement = `SELECT * FROM books ORDER BY title`
+
+// ListBooks returns a list of books, ordered by title.
+/*func (db *mysqlDB) ListBooks() ([]*Book, error) {
+	rows, err := db.list.Query()
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var books []*Book
+	for rows.Next() {
+		book, err := scanBook(rows)
+		if err != nil {
+			return nil, fmt.Errorf("mysql: could not read row: %v", err)
+		}
+
+		books = append(books, book)
+	}
+
+	return books, nil
+}*/
