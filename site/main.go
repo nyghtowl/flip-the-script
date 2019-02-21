@@ -56,9 +56,16 @@ func main() {
 //Code adjust from https://github.com/campoy/go-web-workshop/blob/master/section02/README.md & https://github.com/GoogleCloudPlatform/golang-samples/blob/master/getting-started/bookshelf/app/app.go
 func registerHandlers() {
 	r := mux.NewRouter()
+
+	/*Static file management*/
+	staticHandler := http.FileServer(http.Dir("./static/"))
+	http.Handle("/static/", http.StripPrefix("/static/", staticHandler))
+
+	/*Page routes*/
 	r.Methods("GET").Path("/").Handler(appHandler(indexHandler))
 	r.Methods("POST").Path("/selected").Handler(appHandler(optionSelected))
-
+/*	log.Printf("ERROR at POST", err)
+*/
 	/*	r.Methods("POST").Path("/books").HandlerFunc(appHandler(createHandler))
 	// match only POST requests on /media/
 	r.Methods("POST").Handler("/media/", addMedia)
@@ -120,7 +127,11 @@ func indexHandler(w http.ResponseWriter, r *http.Request) *appError{
 
 /*https://blog.scottlogic.com/2017/02/28/building-a-web-app-with-go.html*/
 func optionSelected(w http.ResponseWriter, r *http.Request) *appError {
-	r.ParseForm()
+	log.Printf("OPTIONS")
+	err := r.ParseForm()
+	if err != nil {
+		return appErrorf(err, "could not write template: %v", err)
+	}
 	// r.Form is now either
 	// map[animalselect:[cats]] OR
 	// map[animalselect:[dogs]]
@@ -141,7 +152,6 @@ func optionSelected(w http.ResponseWriter, r *http.Request) *appError {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return appErrorf(err, "Post execute error: %v", err)
 	}*/
-	log.Printf("OPTIONS")
 
 	return parseTemplate("index.html").Execute(w,r,params)
 }
@@ -182,7 +192,7 @@ func (tmpl *appTemplate) Execute(w http.ResponseWriter, r *http.Request, data in
 		Data:        data,
 	}
 	log.Printf("EXECUTE")
-	if err := tmpl.t.Execute(w, d); err != nil {
+	if err := tmpl.t.Execute(w,d); err != nil {
 		return appErrorf(err, "could not write template: %v", err)
 	}
 	return nil

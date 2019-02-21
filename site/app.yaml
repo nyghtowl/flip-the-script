@@ -30,21 +30,9 @@ handlers:
   - url: /.*
     secure: always
     script: auto
-#If the path is empty show index.html.
   - url: /
-    static_files: static/index.html
-    upload: static/index.html
-
-#  - url: /site/$
-#    static_files: /index.html
-#    upload: /index.html
-#  - url: /site/(.*)/$
-#    static_files: public/\1/index.html
-#    upload: public/.*/index.html
-#  - url: /site
-#    static_dir: public
-#    secure: always
-#  - url: /
-#    static_files: /index.html
-#    upload: /index.html
-#    secure: always
+    static_files: index.html
+    upload: index.html
+  - url: /site
+    static_dir: public
+    secure: always

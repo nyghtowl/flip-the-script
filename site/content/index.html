@@ -15,22 +15,18 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-{{/*---*/}}
-{{/*title: Flip the Script*/}}
-{{/*layout: index*/}}
-{{/*---*/}}
 <html>
 <head>
     <title>{{.Data.PageTitle}}</title>
-    <link rel="stylesheet"  type="text/css" href="static/template.css">
+    <link rel="stylesheet" href="/static/template.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script type='text/javascript'>
         $(document).ready(function() {
             $('input[name=animalselect]').change(function(){
-                $('Form').submit();
+                $('form').submit();
             });
         });
     </script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <meta charset="UTF-8">
 </head>
 <body>
@@ -41,7 +37,7 @@
         <p> Which do you prefer</p><br>
 
         {{with $1:=.Data.PageRadioButtons}}
-        <form action="/selected" method="POST">
+        <form action="/selected" method="post">
             {{range $1}}
             <input type="radio" name={{.Name}} value={{.Value}} {{if .IsDisabled}} disabled=true {{end}} {{if .IsChecked}}checked{{end}}> {{.Text}}
              {{end}}
