@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+{{/* Copyright 2019 Google LLC
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      https://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+*/}}
+
+<h3>{{.Title}}</h3>
+
+<div class="btn-group">
+    <form action="/media/{{.ID}}:delete" method="post">
+        <a href="/media/{{.ID}}/edit" class="btn btn-primary btn-sm">
+            <i class="glyphicon glyphicon-edit"></i>
+            <span>Edit media</span>
+        </a>
+        <button class="btn btn-danger btn-sm">
+            <i class="glyphicon glyphicon-trash"></i>
+            <span>Delete media</span>
+        </button>
+    </form>
+</div>
+
+<div class="media">
+    <div class="media-left">
+        <img src="{{if .ImageURL}}{{.ImageURL}}{{else}}https://placekitten.com/g/200/300{{end}}">
+    </div>
+    <div class="media-body">
+        <h4>{{.Title}} <small>{{.ReleasedDate}}</small></h4>
+        <h5>By {{if .DirectorName}}{{.DirectorName}}{{else}}unknown{{end}}</h5>
+        <p>{{if .Description}}{{.Description}}{{else}}No description provided.{{end}}</p>
+        <small>Added by {{.CreatedByDisplayName}}</small>
+    </div>
+</div>

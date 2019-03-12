@@ -18,7 +18,9 @@
 <html>
 <head>
     <title>{{.Data.PageTitle}}</title>
-    <link rel="stylesheet" href="/static/template.css">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script type='text/javascript'>
         $(document).ready(function() {
@@ -27,11 +29,10 @@
             });
         });
     </script>
-    <meta charset="UTF-8">
 </head>
 <body>
-    <div class="topnav"><h1>{{.Data.PageTitle}}</h1></div>
 
+<h3>{{.Data.PageTitle}}</h3>
     <div class="content">
         <p>The date today is {{.Data.Date}}</p><br>
         <p> Which do you prefer</p><br>
@@ -46,8 +47,23 @@
 
       {{with $2:=.Data.Answer}}
         <p>Your answer is {{$2}}</p><br>
-       {{end}}
-    </div>
-</body>
+      {{end}}
 
+      {{range .Data.Media}}
+        <div class="media">
+            <div class="media-left">
+                <img src="{{if .ImageURL}}{{.ImageURL}}{{else}}https://placekitten.com/g/200/300{{end}}">
+            </div>
+            <div class="media-body">
+                <h4><a href="/media/{{.ID}}">{{.Title}}</a></h4>
+                <p>{{.DirectorName}}</p>
+            </div>
+        </div>
+        {{else}}
+        <p>No media found.</p>
+      {{end}}
+
+    </div>
+
+</body>
 </html>

@@ -72,6 +72,6 @@ Resources
 - [Bitch Media](https://www.bitchmedia.org/)
 - [Bechdel Test](https://bechdeltest.com/)
 - [Geena Davis Institute on Gender in Media](https://seejane.org/)
-
+- [Bechdel charts](https://imgur.com/a/612eD#0)
 
 **This is not a Google product.**

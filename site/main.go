@@ -15,41 +15,42 @@
 package main
 
 import (
+	"database/sql"
 	"fmt"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
-	"html/template"
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 	"time"
 )
 
-type RadioButton struct {
-	Name       string
-	Value      string
-	IsDisabled bool
-	IsChecked  bool
-	Text       string
-}
 
 type templateParams struct {
 	PageTitle       string
 	Date 			string
-	PageRadioButtons []RadioButton
-	Answer          string
-
 }
+
+var (
+	// See template.go
+	listTmpl   = parseTemplate("list.html")
+	editTmpl   = parseTemplate("edit.html")
+	detailTmpl = parseTemplate("detail.html")
+)
+
+
+var debugProject = true
 
 func main() {
 	//Start the web server, set the port to listen to 8080. Without assumes localhost.
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
-		log.Print("Defaulting to port %s ", port)
+		log.Printf("Defaulting to port %s ", port)
 	}
 	registerHandlers()
-	log.Printf("Listening on port %s", port)
+	fmt.Sprintf("Listening on port %s", port)
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", port), nil))
 }
 
@@ -63,137 +64,97 @@ func registerHandlers() {
 
 	/*Page routes*/
 	r.Methods("GET").Path("/").Handler(appHandler(indexHandler))
-	r.Methods("POST").Path("/selected").Handler(appHandler(optionSelected))
-/*	log.Printf("ERROR at POST", err)
-*/
-	/*	r.Methods("POST").Path("/books").HandlerFunc(appHandler(createHandler))
+	r.Methods("GET").Path("/media").
+		Handler(appHandler(listHandler))
+	r.Methods("GET").Path("/media/{id:[0-9]+}").
+		Handler(appHandler(detailHandler))
+
 	// match only POST requests on /media/
 	r.Methods("POST").Handler("/media/", addMedia)
-	// match GET regardless of mediaID
-	r.HandleFunc("/media/{mediaID}", getMedia)
-*/
+
 	http.Handle("/", handlers.CombinedLoggingHandler(os.Stderr, r))
 }
 
 
 // http://blog.golang.org/error-handling-and-go
-type appHandler func(http.ResponseWriter, *http.Request) *appError
+type appHandler func(http.ResponseWriter, *http.Request) error
 
 type appError struct {
-	Error   error
-	Message string
-	Code    int
+	cause   error
+	message string
+	code    int
+}
+
+func (e *appError) Error() string {
+	return fmt.Sprintf("Handler error: status code: %d, message: %s, underlying err: %#v\n", e.code, e.message, e.cause)
 }
 
 func (fn appHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	if e := fn(w, r); e != nil { // e is *appError, not os.Error.
-		log.Printf("Handler error: status code: %d, message: %s, underlying err: %#v\n", e.Code, e.Message, e.Error)
-		http.Error(w, e.Message, e.Code)
+	e := fn(w, r)
+	if appErr,ok := e.(*appError); ok  { // e is *appError, not os.Error.
+		http.Error(w, appErr.message, appErr.code)
 	}
 
 }
 
-func appErrorf(err error, format string, v ...interface{}) *appError {
+func appErrorf(err error, format string, v ...interface{}) error {
 	return &appError{
-		Error:   err,
-		Message: fmt.Sprintf(format, v...),
-		Code:    500,
+		cause:   err,
+		message: fmt.Sprintf(format, v...),
+		code:    500,
 	}
 }
 
 
-func indexHandler(w http.ResponseWriter, r *http.Request) *appError{
+func indexHandler(w http.ResponseWriter, r *http.Request) error{
 	params := templateParams {}
 	params.PageTitle = "Flip th Script"
 	params.Date = time.Now().Format("02-01-2006")
-	params.PageRadioButtons = []RadioButton{
-		RadioButton{"animalselect", "cats", false, false, "Cats"},
-		RadioButton{"animalselect", "dogs", false, false, "Dogs"},}
 
-
-/*	t := template.Must(template.ParseFiles("content/index.html"))
-*//*	if err := getBQData(r); err != nil {
-		log.Fatalf("Error getting data: %v\n", err)
-	}
-*/
-/*	//execute the template and pass it the params struct to fill in the gaps
-	if err := t.ExecuteTemplate(w, "index.html", params); err !=nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return appErrorf(err, "Form execute error: %v", err)
-	}*/
-	log.Printf("INDEXHANDLER")
-	return parseTemplate("index.html").Execute(w, r, params)
+	if debugProject { fmt.Sprintf("INDEXHANDLER") }
+	return parseTemplate("base.html").Execute(w, r, params)
 }
 
-/*https://blog.scottlogic.com/2017/02/28/building-a-web-app-with-go.html*/
-func optionSelected(w http.ResponseWriter, r *http.Request) *appError {
-	log.Printf("OPTIONS")
-	err := r.ParseForm()
+
+// listHandler displays a list with summaries of books in the database.
+func listHandler(w http.ResponseWriter, r *http.Request) error {
+
+	/*Create query - setup to it can be generalized*/
+
+	defaultQuery := `SELECT *
+    	FROM ` + "`flipthescript.fts.Media`" + `
+    	LIMIT 5`
+
+	media, err := listMedia(defaultQuery)
 	if err != nil {
-		return appErrorf(err, "could not write template: %v", err)
+		return appErrorf(err, "Error getting data from BigQuery: %v", err)
 	}
-	// r.Form is now either
-	// map[animalselect:[cats]] OR
-	// map[animalselect:[dogs]]
-	// so get the animal which has been selected
-	log.Printf("OPTIONS %s", r.FormValue("animalselect"))
-	params := templateParams {}
-	params.PageTitle = "Your preferred animal"
-	params.Date = time.Now().Format("02-01-2006")
-	params.Answer = r.Form.Get("animalselect")
 
-
-	// generate page by passing page variables into template
-/*
-	t := template.Must(template.ParseFiles("content/index.html"))
-
-	//execute the template and pass it the params struct to fill in the gaps
-	if err := t.ExecuteTemplate(w, "index.html", params); err !=nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return appErrorf(err, "Post execute error: %v", err)
-	}*/
-
-	return parseTemplate("index.html").Execute(w,r,params)
+	return listTmpl.Execute(w, r, media)
 }
 
+/*Need to pass reference to database instead of connecting to it everytime ...   *mediaDB */
 
-// parseTemplate applies a given file to the body of the base template.
-func parseTemplate(filename string) *appTemplate {
-/*	tmpl := template.Must(template.ParseFiles("templates/base.html"))
-
-	// Put the named file into a template called "body"
-	path := filepath.Join("content", filename)
-	b, err := ioutil.ReadFile(path)
+func bookFromRequest(r *http.Request) (*bookshelf.Book, error) {
+	id, err := strconv.ParseInt(mux.Vars(r)["id"], 10, 64)
 	if err != nil {
-		panic(fmt.Errorf("could not read template: %v", err))
+		return nil, fmt.Errorf("bad book id: %v", err)
 	}
-	template.Must(tmpl.New("body").Parse(string(b)))
-*/
-	log.Printf("PARSING")
-	tempPath :="content/"
-	tmpl := template.Must(template.ParseFiles(tempPath + filename))
-
-	//execute the template and pass it the params struct to fill in the gaps
-
-	return &appTemplate{tmpl.Lookup("index.html")}
+	book, err := bookshelf.DB.GetBook(id)
+	if err != nil {
+		return nil, fmt.Errorf("could not find book: %v", err)
+	}
+	return book, nil
 }
 
-// appTemplate is a user login-aware wrapper for a html/template.
-type appTemplate struct {
-	t *template.Template
+// detailHandler displays the details of a given book.
+func detailHandler(w http.ResponseWriter, r *http.Request) error {
+	book, err := bookFromRequest(r)
+	if err != nil {
+		return appErrorf(err, "%v", err)
+	}
+
+	return detailTmpl.Execute(w, r, book)
 }
 
-// Execute writes the template using the provided data, adding login and user
-// information to the base template.
-func (tmpl *appTemplate) Execute(w http.ResponseWriter, r *http.Request, data interface{}) *appError {
-	d := struct {
-		Data        interface{}
-	}{
-		Data:        data,
-	}
-	log.Printf("EXECUTE")
-	if err := tmpl.t.Execute(w,d); err != nil {
-		return appErrorf(err, "could not write template: %v", err)
-	}
-	return nil
-}
+
