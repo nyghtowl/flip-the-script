@@ -15,19 +15,19 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 */}}
-<h3>{{.Data.PageTitle}}</h3>
+<h3>Media List</h3>
 <a href="/media/add" class="btn btn-success btn-sm">
     <i class="glyphicon glyphicon-plus"></i>
     <span>Add media</span>
 </a>
 
-{{range .Data}}
+{{range .}}
     <div class="media">
         <div class="media-left">
             <img src="{{if .ImageURL}}{{.ImageURL}}{{else}}https://placekitten.com/g/200/300{{end}}">
         </div>
         <div class="media-body">
-            <h4><a href="/media/{{.ID}}">{{.Title}}</a></h4>
+            <h4><a href="/media/{{.MediaID}}">{{.Title}}</a></h4>
             <p>{{.DirectorName}}</p>
         </div>
     </div>

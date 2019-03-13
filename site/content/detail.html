@@ -13,12 +13,12 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 */}}
-
+{{with index . 0}}
 <h3>{{.Title}}</h3>
 
 <div class="btn-group">
-    <form action="/media/{{.ID}}:delete" method="post">
-        <a href="/media/{{.ID}}/edit" class="btn btn-primary btn-sm">
+    <form action="/media/{{.MediaID}}:delete" method="post">
+        <a href="/media/{{.MediaID}}/edit" class="btn btn-primary btn-sm">
             <i class="glyphicon glyphicon-edit"></i>
             <span>Edit media</span>
         </a>
@@ -34,9 +34,11 @@
         <img src="{{if .ImageURL}}{{.ImageURL}}{{else}}https://placekitten.com/g/200/300{{end}}">
     </div>
     <div class="media-body">
-        <h4>{{.Title}} <small>{{.ReleasedDate}}</small></h4>
+        <h4>{{.Title}} <small>{{.ReleaseDate}}</small></h4>
         <h5>By {{if .DirectorName}}{{.DirectorName}}{{else}}unknown{{end}}</h5>
         <p>{{if .Description}}{{.Description}}{{else}}No description provided.{{end}}</p>
-        <small>Added by {{.CreatedByDisplayName}}</small>
+        <small>Added by {{.CreatedBy}}</small>
     </div>
 </div>
+
+{{end}}

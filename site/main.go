@@ -15,7 +15,6 @@
 package main
 
 import (
-	"database/sql"
 	"fmt"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
@@ -23,14 +22,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
-	"time"
 )
-
-
-type templateParams struct {
-	PageTitle       string
-	Date 			string
-}
 
 var (
 	// See template.go
@@ -39,6 +31,12 @@ var (
 	detailTmpl = parseTemplate("detail.html")
 )
 
+/*
+TODO try other templates
+TODO all form input
+TODO put flipthescript domain in place
+
+*/
 
 var debugProject = true
 
@@ -63,15 +61,15 @@ func registerHandlers() {
 	http.Handle("/static/", http.StripPrefix("/static/", staticHandler))
 
 	/*Page routes*/
-	r.Methods("GET").Path("/").Handler(appHandler(indexHandler))
+	r.Handle("/", http.RedirectHandler("/media", http.StatusFound))
 	r.Methods("GET").Path("/media").
 		Handler(appHandler(listHandler))
 	r.Methods("GET").Path("/media/{id:[0-9]+}").
 		Handler(appHandler(detailHandler))
 
 	// match only POST requests on /media/
-	r.Methods("POST").Handler("/media/", addMedia)
-
+/*	r.Methods("POST").Handler("/media/", addMedia)
+*/
 	http.Handle("/", handlers.CombinedLoggingHandler(os.Stderr, r))
 }
 
@@ -105,25 +103,13 @@ func appErrorf(err error, format string, v ...interface{}) error {
 	}
 }
 
-
-func indexHandler(w http.ResponseWriter, r *http.Request) error{
-	params := templateParams {}
-	params.PageTitle = "Flip th Script"
-	params.Date = time.Now().Format("02-01-2006")
-
-	if debugProject { fmt.Sprintf("INDEXHANDLER") }
-	return parseTemplate("base.html").Execute(w, r, params)
-}
-
-
-// listHandler displays a list with summaries of books in the database.
+// listHandler displays a list with summaries media in the database.
 func listHandler(w http.ResponseWriter, r *http.Request) error {
 
-	/*Create query - setup to it can be generalized*/
-
+	/*TODO Create query - setup to it can be generalized*/
 	defaultQuery := `SELECT *
     	FROM ` + "`flipthescript.fts.Media`" + `
-    	LIMIT 5`
+    	LIMIT 20`
 
 	media, err := listMedia(defaultQuery)
 	if err != nil {
@@ -133,28 +119,29 @@ func listHandler(w http.ResponseWriter, r *http.Request) error {
 	return listTmpl.Execute(w, r, media)
 }
 
-/*Need to pass reference to database instead of connecting to it everytime ...   *mediaDB */
+/*TODO Need to pass reference to database instead of connecting to it everytime ...   *mediaDB */
 
-func bookFromRequest(r *http.Request) (*bookshelf.Book, error) {
+func mediaFromRequest(r *http.Request) ([]Media, error) {
 	id, err := strconv.ParseInt(mux.Vars(r)["id"], 10, 64)
 	if err != nil {
 		return nil, fmt.Errorf("bad book id: %v", err)
 	}
-	book, err := bookshelf.DB.GetBook(id)
+	media, err := GetMedia(id)
 	if err != nil {
 		return nil, fmt.Errorf("could not find book: %v", err)
 	}
-	return book, nil
+	return media, nil
 }
 
-// detailHandler displays the details of a given book.
+// detailHandler displays the details of given media.
 func detailHandler(w http.ResponseWriter, r *http.Request) error {
-	book, err := bookFromRequest(r)
+	media, err := mediaFromRequest(r)
+	log.Printf("DETAILED HANDLER %v", media)
 	if err != nil {
 		return appErrorf(err, "%v", err)
 	}
 
-	return detailTmpl.Execute(w, r, book)
+	return detailTmpl.Execute(w, r, media)
 }
 
 

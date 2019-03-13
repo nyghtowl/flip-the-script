@@ -20,6 +20,7 @@ import (
 "io/ioutil"
 "net/http"
 "path/filepath"
+	"time"
 )
 
 // parseTemplate applies a given file to the body of the base template.
@@ -50,9 +51,13 @@ type appTemplate struct {
 // information to the base template.
 func (tmpl *appTemplate) Execute(w http.ResponseWriter, r *http.Request, data interface{}) error {
 	d := struct {
+		PageTitle   string
+		Date 		string
 		Data        interface{}
 	}{
-		Data:        data,
+		PageTitle:	"Flip th Script",
+		Date:		time.Now().Format("02-01-2006"),
+		Data:		data,
 	}
 	if err := tmpl.t.Execute(w, d); err != nil {
 		return appErrorf(err, "could not write template: %v", err)
