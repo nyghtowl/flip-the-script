@@ -20,8 +20,8 @@ import (
 	"database/sql"
 	"fmt"
 	"google.golang.org/api/iterator"
-	"log"
-	"os"
+	"strconv"
+	_ "strconv"
 )
 
 var mediaSchemaOrig = bigquery.Schema{
@@ -56,29 +56,11 @@ var actorSchema = bigquery.Schema{
 	{Name: "RottenTomatoeLink", Required: false, Type: bigquery.StringFieldType},
 }
 
-func setupQuery(d string) (string){
-
-}
 
 /*BigQuery query*/
-func getBQData(q string) ([][]bigquery.Value, error) {
+func getBQData(ctx context.Context, q string) ([][]bigquery.Value, error) {
 
-	ctx := context.Background()
-
-	datasetID := os.Getenv("DATASETID")
-	projectID := os.Getenv("PROJECTID")
-	//projectID := appengine.AppID(ctx) // should work with appengine
-	if datasetID == "" || projectID == ""{
-		log.Print("SETUP ENVIRONMENT VARIABLES")
-	}
-
-	client, err := bigquery.NewClient(ctx, projectID);
-	if err != nil {
-		return nil, err
-
-	}
-
-	query := client.Query(q)
+	query := bigQueryClient.Query(q)
 
 	// Location must match that of the dataset(s) referenced in the query.
 	query.Location = "US"
@@ -86,7 +68,6 @@ func getBQData(q string) ([][]bigquery.Value, error) {
 	it, err := query.Read(ctx)
 	if err != nil {
 		return nil, err
-
 	}
 
 	var rows [][]bigquery.Value
@@ -106,7 +87,7 @@ func getBQData(q string) ([][]bigquery.Value, error) {
 }
 
 
-type mediaParams struct {
+type Media struct {
 	MediaID       	bigquery.Value
 	Title 			bigquery.Value
 	MediaType 		bigquery.Value
@@ -115,20 +96,21 @@ type mediaParams struct {
 	ImageURL		bigquery.Value
 	ReleaseDate		bigquery.Value
 	Description		bigquery.Value
+	CreatedBy		bigquery.Value
 }
 
 
-func listMedia(query string) ([]mediaParams, error) {
-	mediaList, err := getBQData(query)
+func listMedia(ctx context.Context, query string) ([]Media, error) {
+	mediaList, err := getBQData(ctx, query)
 	if err != nil {
 		return nil, err
 	}
 
-	var mediaStruct []mediaParams
+	var mediaStruct []Media
 	for _, row := range mediaList {
 		/*add to website*/
 		if debugProject { fmt.Sprintf("%s",row) }
-		media := mediaParams{}
+		media := Media{}
 		media.MediaID =  row[0]
 		media.Title = row[1]
 		media.MediaType = row[2]
@@ -140,13 +122,11 @@ func listMedia(query string) ([]mediaParams, error) {
 }
 
 // GetBook retrieves a media by its ID.
-func () GetMedia(id int64) ([]mediaParams, error) {
-	query := setupQuery(id)
-	query := `SELECT ID + ' id 
-    	FROM ` + "`flipthescript.fts.Media`" + `
-    	LIMIT 5`
+func GetMedia(ctx context.Context, id int64) ([]Media, error) {
+	query := `SELECT * FROM` + "`flipthescript.fts.Media`" + `
+    	WHERE ID=` + strconv.FormatInt(id, 10)
 
-	media, err := listMedia(query)
+	media, err := listMedia(ctx, query)
 
 	if err == sql.ErrNoRows {
 		return nil, fmt.Errorf("Could not find media with id %d", id)

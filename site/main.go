@@ -15,6 +15,8 @@
 package main
 
 import (
+	"cloud.google.com/go/bigquery"
+	"context"
 	"fmt"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
@@ -29,16 +31,34 @@ var (
 	listTmpl   = parseTemplate("list.html")
 	editTmpl   = parseTemplate("edit.html")
 	detailTmpl = parseTemplate("detail.html")
+
+	debugProject = true
+	bigQueryClient *bigquery.Client
+	projectID, datasetID string
 )
 
 /*
 TODO try other templates
 TODO all form input
 TODO put flipthescript domain in place
+TODO add tests
+TODO add actors and expand on media
 
 */
 
-var debugProject = true
+
+func init() {
+	var err error
+	projectID = os.Getenv("PROJECTID")
+	datasetID = os.Getenv("DATASETID")
+	if datasetID == "" || projectID == ""{
+		log.Print("SETUP ENVIRONMENT VARIABLES")
+	}
+	bigQueryClient, err = bigquery.NewClient(context.Background(), projectID);
+	if err != nil {
+		log.Fatalf("Cannot initialize BigQuery client: %v, ", err)
+	}
+}
 
 func main() {
 	//Start the web server, set the port to listen to 8080. Without assumes localhost.
@@ -111,7 +131,7 @@ func listHandler(w http.ResponseWriter, r *http.Request) error {
     	FROM ` + "`flipthescript.fts.Media`" + `
     	LIMIT 20`
 
-	media, err := listMedia(defaultQuery)
+	media, err := listMedia(r.Context(), defaultQuery)
 	if err != nil {
 		return appErrorf(err, "Error getting data from BigQuery: %v", err)
 	}
