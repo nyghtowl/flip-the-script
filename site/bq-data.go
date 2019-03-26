@@ -86,35 +86,44 @@ func getBQData(ctx context.Context, q string) ([][]bigquery.Value, error) {
 	}
 }
 
-
-type Media struct {
-	MediaID       	bigquery.Value
+type MediaBQ struct {
+	ID		       	bigquery.Value
 	Title 			bigquery.Value
-	MediaType 		bigquery.Value
-	DirectorName    bigquery.Value
-	Industry	    bigquery.Value
-	ImageURL		bigquery.Value
-	ReleaseDate		bigquery.Value
 	Description		bigquery.Value
+	MediaType 		bigquery.Value
+	Industry	    bigquery.Value
+	ReleaseDate	    bigquery.Value
+
+	ActorID		 	bigquery.Value
+	CharacterID	 	bigquery.Value
+	DirectorID	    bigquery.Value
+
+	ImageURL		bigquery.Value
+	Bechdel		    bigquery.Value
+	WikiURL		    bigquery.Value
+	IMDBURL		    bigquery.Value
+	RottenTomURL    bigquery.Value
+
+	CreatedByID	  	bigquery.Value
 	CreatedBy		bigquery.Value
+	CreatedDate	    bigquery.Value
 }
 
-
-func listMedia(ctx context.Context, query string) ([]Media, error) {
+func listMedia(ctx context.Context, query string) ([]MediaBQ, error) {
 	mediaList, err := getBQData(ctx, query)
 	if err != nil {
 		return nil, err
 	}
 
-	var mediaStruct []Media
+	var mediaStruct []MediaBQ
 	for _, row := range mediaList {
 		/*add to website*/
 		if debugProject { fmt.Sprintf("%s",row) }
-		media := Media{}
-		media.MediaID =  row[0]
+		media := MediaBQ{}
+		media.ID =  row[0]
 		media.Title = row[1]
 		media.MediaType = row[2]
-		media.DirectorName = row[3]
+		media.DirectorID = row[3]
 		media.Industry = row[4]
 		mediaStruct = append(mediaStruct, media)
 	}
@@ -122,7 +131,7 @@ func listMedia(ctx context.Context, query string) ([]Media, error) {
 }
 
 // GetBook retrieves a media by its ID.
-func GetMedia(ctx context.Context, id int64) ([]Media, error) {
+func GetMedia(ctx context.Context, id int64) ([]MediaBQ, error) {
 	query := `SELECT * FROM` + "`flipthescript.fts.Media`" + `
     	WHERE ID=` + strconv.FormatInt(id, 10)
 

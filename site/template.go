@@ -23,6 +23,8 @@ import (
 	"time"
 )
 
+/*TODO add back bookshelf and update for new data cols avail*/
+
 // parseTemplate applies a given file to the body of the base template.
 func parseTemplate(filename string) *appTemplate {
 	if debugProject { fmt.Sprintf("PARSING") }

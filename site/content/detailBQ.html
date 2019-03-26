@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-{{/*
-  Copyright 2019 Google LLC
+{{/* Copyright 2019 Google LLC
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -14,11 +13,12 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 */}}
-<h3>Media</h3>
+{{with index . 0}}
+<h3>{{.Title}}</h3>
 
 <div class="btn-group">
-    <form action="/books/{{.ID}}:delete" method="post">
-        <a href="/books/{{.ID}}/edit" class="btn btn-primary btn-sm">
+    <form action="/media/{{.MediaID}}:delete" method="post">
+        <a href="/media/{{.MediaID}}/edit" class="btn btn-primary btn-sm">
             <i class="glyphicon glyphicon-edit"></i>
             <span>Edit media</span>
         </a>
@@ -40,3 +40,5 @@
         <small>Added by  {{if .CreatedBy}}{{.CreatedBy}}{{else}}unknown{{end}}</small>
     </div>
 </div>
+
+{{end}}
