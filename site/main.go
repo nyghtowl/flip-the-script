@@ -133,9 +133,6 @@ func registerHandlers() {
 			w.Write([]byte("ok"))
 		})
 
-	// match only POST requests on /media/
-/*	r.Methods("POST").Handler("/media/", addMedia)
-*/
 	http.Handle("/", handlers.CombinedLoggingHandler(os.Stderr, r))
 }
 
@@ -219,7 +216,7 @@ func listHandler(w http.ResponseWriter, r *http.Request) error {
 	if err != nil {
 		return appErrorf(err, "could not list media: %v", err)
 	}
-
+	media[0].PageSubTitle = "Media List"
 	return listTmpl.Execute(w, r, media)
 }
 
@@ -243,7 +240,7 @@ func detailHandler(w http.ResponseWriter, r *http.Request) error {
 	if err != nil {
 		return appErrorf(err, "could not list media detail: %v", err)
 	}
-
+	media.PageSubTitle = "Media Details"
 	return detailTmpl.Execute(w, r, media)
 }
 
@@ -262,6 +259,7 @@ func editFormHandler(w http.ResponseWriter, r *http.Request) error {
 		return appErrorf(err, "%v", err)
 	}
 
+	media.PageSubTitle = "Edit Media"
 	return editTmpl.Execute(w, r, media)
 }
 
@@ -358,7 +356,9 @@ func updateHandler(w http.ResponseWriter, r *http.Request) error {
 		return appErrorf(err, "could not save media: %v", err)
 	}
 /*	TODO go publishUpdate(media.ID)
-*/	http.Redirect(w, r, fmt.Sprintf("/media/%d", media.ID), http.StatusFound)
+*/
+	media.PageSubTitle = "Media Update"
+	http.Redirect(w, r, fmt.Sprintf("/media/%d", media.ID), http.StatusFound)
 	return nil
 }
 

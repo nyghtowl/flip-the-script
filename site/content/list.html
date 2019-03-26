@@ -15,7 +15,9 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 */}}
-<h3>Media List</h3>
+{{with index . 0}}
+<h3>{{.PageSubTitle}}</h3>
+{{end}}
 <a href="/media/add" class="btn btn-success btn-sm">
     <i class="glyphicon glyphicon-plus"></i>
     <span>Add media</span>

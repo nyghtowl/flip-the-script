@@ -14,11 +14,12 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 */}}
-<h3>Media</h3>
+
+<h3>{{.PageSubTitle}}</h3>
 
 <div class="btn-group">
-    <form action="/books/{{.ID}}:delete" method="post">
-        <a href="/books/{{.ID}}/edit" class="btn btn-primary btn-sm">
+    <form action="/media/{{.ID}}:delete" method="post">
+        <a href="/media/{{.ID}}/edit" class="btn btn-primary btn-sm">
             <i class="glyphicon glyphicon-edit"></i>
             <span>Edit media</span>
         </a>

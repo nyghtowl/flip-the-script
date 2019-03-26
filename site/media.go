@@ -37,6 +37,8 @@ type Media struct {
 	CreatedBy     string
 	CreatedDate	  string
 
+	PageSubTitle  string
+
 }
 
 // CreatedByDisplayName returns a string appropriate for displaying the name of
