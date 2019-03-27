@@ -19,6 +19,8 @@ import (
 	"errors"
 	"fmt"
 	_ "github.com/GoogleCloudPlatform/cloudsql-proxy/proxy/dialers/postgres"
+	"math/rand"
+	"time"
 
 	"log"
 )
@@ -315,7 +317,13 @@ func (db *pgsqlDB) GetMedia(id int64) (*Media, error) {
 
 // ListMedia returns a list of media, ordered by title.
 func (db *pgsqlDB) ListMedia() ([]*Media, error) {
-	log.Printf(" DB SQL LIST MEDIA ")
+	rand.Seed(time.Now().Unix())
+	tempPhotoList := []string{
+		"http://media.tmz.com/2013/12/13/1213-grumpy-1.jpg",
+		"https://blog.hubspot.com/hubfs/cats-hollywood.jpg",
+		"https://www.fuzzyfuzzlet.com/MTV/Dollface-Persian-Kitten_Directors-Chair.jpg",
+		"https://placekitten.com/g/200/300",
+	}
 
 	rows, err := db.list.Query()
 	if err != nil {
@@ -324,12 +332,16 @@ func (db *pgsqlDB) ListMedia() ([]*Media, error) {
 	defer rows.Close()
 
 	var mediaList []*Media
+	n:=0
 	for rows.Next() {
 		media, err := scanMedia(rows)
 		if err != nil {
 			return nil, fmt.Errorf("postgreSQL: could not read row: %v", err)
 		}
-
+		if media.ImageURL == "" {
+			n = rand.Int() % len(tempPhotoList)
+		}
+		media.ImageURL = (tempPhotoList[n])
 		mediaList = append(mediaList, media)
 	}
 

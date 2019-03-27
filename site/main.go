@@ -50,11 +50,12 @@ var (
 )
 
 /*
-TODO try other templates
-TODO all form input
-TODO put flipthescript domain in place
+TODO break down the index file into components - add list section and pass in data - remove hardcode of page in TemplatesTODO var for all the things esp images and db names
+TODO all form input - get it
 TODO add tests
-TODO add actors and expand on media
+TODO add actors, characters, directors and expand on media
+TODO add in memory, datastore and pubsub to store data loaded
+TODO put flipthescript domain in place and upload on AE
 */
 
 

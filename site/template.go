@@ -41,6 +41,11 @@ func parseTemplate(filename string) *appTemplate {
 	}
 	template.Must(tmpl.New("body").Parse(string(b)))
 
+	if true {
+		pagePath ="static/startbootstrap/"
+		tmpl = template.Must(template.ParseFiles(pagePath + "index.html"))
+		return &appTemplate{tmpl.Lookup("index.html")}
+	}
 	return &appTemplate{tmpl.Lookup("base.html")}
 }
 
@@ -57,7 +62,7 @@ func (tmpl *appTemplate) Execute(w http.ResponseWriter, r *http.Request, data in
 		Date 		string
 		Data        interface{}
 	}{
-		PageTitle:	"Flip th Script",
+		PageTitle:	"Flip the Script",
 		Date:		time.Now().Format("02-01-2006"),
 		Data:		data,
 	}
