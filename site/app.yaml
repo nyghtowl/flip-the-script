@@ -12,9 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-runtime: go
+runtime: go112
 env: flex
 threadsafe: true
+main: ./
 
 #Use to create a  single instance that manually scales
 #manual_scaling:
@@ -31,8 +32,8 @@ handlers:
     secure: always
     script: auto
   - url: /
-    static_files: index.html
-    upload: index.html
+    static_files: index-org.html
+    upload: index-org.html
   - url: /site
     static_dir: public
     secure: always

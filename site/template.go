@@ -29,7 +29,7 @@ import (
 func parseTemplate(filename string) *appTemplate {
 	if debugProject { fmt.Sprintf("PARSING") }
 
-	pagePath :="content/"
+	pagePath :="content/startbootstrap/"
 
 	tmpl := template.Must(template.ParseFiles(pagePath + "base.html"))
 
@@ -41,9 +41,9 @@ func parseTemplate(filename string) *appTemplate {
 	}
 	template.Must(tmpl.New("body").Parse(string(b)))
 
-	if true {
-		pagePath ="static/startbootstrap/"
-		tmpl = template.Must(template.ParseFiles(pagePath + "index.html"))
+	if false {
+		pagePath ="content/bookshelf/"
+		tmpl = template.Must(template.ParseFiles(pagePath + "base.html"))
 		return &appTemplate{tmpl.Lookup("index.html")}
 	}
 	return &appTemplate{tmpl.Lookup("base.html")}

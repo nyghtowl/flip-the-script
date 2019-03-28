@@ -1,0 +1,9 @@
+# robots.txt for https://www.flipthescript.dev properties
+User-agent: *
+Disallow: /find
+Disallow: /find/
+Disallow: /find$
+Disallow: /search/director
+Disallow: /search/actor
+Disallow: /search/character
+Disallow: /search/title

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+
+<section class="showcase">
+    <div class="container-fluid p-lg-5">
+        {{with index . 0}}
+            <h3 class="text-cente">{{.PageSubTitle}}</h3>
+        {{end}}
+
+      {{range .}}
+      <div class="row no-gutters">
+          <div class="col-lg-4 text-white img-fluid" style="background-image: url('{{if .ImageURL}}{{.ImageURL}}{{else}}https://placekitten.com/g/200/300{{end}}');"></div>
+          <div class="col-lg-4 showcase-text">
+              <h1><a href="/media/{{.ID}}">{{.Title}}</a></h1>
+              <p class="lead mb-0">{{if .Description}}{{.Description}}{{else}}What do you want it to be about?{{end}}</p>
+              <p class="lead mb-0">Actor: {{if .ActorID}}{{.ActorName}}{{else}}Miss Kitty Fantastico{{end}}</p>
+          </div>
+      </div>
+
+      {{else}}
+          <p>No media found.</p>
+      {{end}}
+
+    </div>
+</section>

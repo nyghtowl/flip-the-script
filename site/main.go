@@ -39,6 +39,7 @@ var (
 	TABLENAME = os.Getenv("TABLENAME")
 
 	// See template.go
+	indexTmpl   = parseTemplate("index.html")
 	listTmpl   = parseTemplate("list.html")
 	editTmpl   = parseTemplate("edit.html")
 	detailTmpl = parseTemplate("detail.html")
@@ -112,7 +113,9 @@ func registerHandlers() {
 		Handler(appHandler(listHandlerBQ))*/
 /*	r.Methods("GET").Path("/media/{id:[0-9]+}").
 		Handler(appHandler(detailHandlerBQ))
-*/	r.Methods("GET").Path("/media").Handler(appHandler(listHandler))
+*/	r.Methods("GET").Path("/media").Handler(appHandler(indexHandler))
+	r.Methods("GET").Path("/media/").Handler(appHandler(indexHandler))
+	r.Methods("GET").Path("/media/list").Handler(appHandler(listHandler))
 	r.Methods("GET").Path("/media/{id:[0-9]+}").
 		Handler(appHandler(detailHandler))
 	r.Methods("GET").Path("/media/add").
@@ -209,6 +212,12 @@ func detailHandlerBQ(w http.ResponseWriter, r *http.Request) error {
 }
 
 /*---------------------------  Cloud SQL  ---------------------------*/
+
+//index is the start page
+func indexHandler(w http.ResponseWriter, r *http.Request) error {
+	log.Printf("INDEX HANDLER")
+	return indexTmpl.Execute(w, r, nil)
+}
 
 // listHandler displays a list with summaries media in the database.
 func listHandler(w http.ResponseWriter, r *http.Request) error {

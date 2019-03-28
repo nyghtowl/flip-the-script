@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+
+
+<title>{{.PageSubTitle}}</title>
+
+<div class="btn-group">
+    <form action="/media/{{.ID}}:delete" method="post">
+        <a href="/media/{{.ID}}/edit" class="btn btn-primary btn-sm">
+            <i class="glyphicon glyphicon-edit"></i>
+            <span>Edit media</span>
+        </a>
+        <button class="btn btn-danger btn-sm">
+            <i class="glyphicon glyphicon-trash"></i>
+            <span>Delete media</span>
+        </button>
+    </form>
+</div>
+
+<div class="media">
+    <div class="media-left">
+        <img src="{{if .ImageURL}}{{.ImageURL}}{{else}}https://placekitten.com/g/200/300{{end}}">
+    </div>
+    <div class="media-body">
+        <h4>{{.Title}} <small>{{.ReleaseDate}}</small></h4>
+        <h5>By {{if .DirectorID}}{{.DirectorID}}{{else}}unknown{{end}}</h5>
+        <p>{{if .Description}}{{.Description}}{{else}}No description provided.{{end}}</p>
+        <small>Added by  {{if .CreatedBy}}{{.CreatedBy}}{{else}}unknown{{end}}</small>
+    </div>
+</div>
